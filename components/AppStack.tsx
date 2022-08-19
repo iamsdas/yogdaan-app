@@ -4,7 +4,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { persistQueryClient } from '@tanstack/react-query-persist-client';
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Home from './Home';
+import { useWalletConnect } from '@walletconnect/react-native-dapp';
+
+import NotConnected from './Connect';
+import AuthStack from './AuthStack';
 
 const Stack = createNativeStackNavigator();
 const queryClient = new QueryClient();
@@ -19,11 +22,16 @@ persistQueryClient({
 });
 
 export default function AppStack() {
+  const connection = useWalletConnect();
   return (
     <NavigationContainer>
       <QueryClientProvider client={queryClient}>
-        <Stack.Navigator>
-          <Stack.Screen name='Home' component={Home} />
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          {connection.connected ? (
+            <Stack.Screen name='Home' component={AuthStack} />
+          ) : (
+            <Stack.Screen name='Connection' component={NotConnected} />
+          )}
         </Stack.Navigator>
       </QueryClientProvider>
     </NavigationContainer>

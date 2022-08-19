@@ -3,7 +3,7 @@ if (Platform.OS !== 'web') {
   require('./global');
 }
 const { registerRootComponent, scheme } = require('expo');
-const { default: App } = require('./components/App');
+const { default: App } = require('./components/AppStack');
 const {
   default: AsyncStorage,
 } = require('@react-native-async-storage/async-storage');

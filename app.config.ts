@@ -91,6 +91,7 @@ const config: ExpoConfig = {
   slug: 'yogdaan',
   version: '1.0.0',
   orientation: 'portrait',
+  jsEngine: 'hermes',
   icon: './assets/icon.png',
   userInterfaceStyle: 'light',
   scheme: 'yogdaan',
