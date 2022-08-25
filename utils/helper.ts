@@ -79,3 +79,20 @@ export const fetchBalance = async (address: string) => {
     ) * 80
   ).toFixed(2);
 };
+
+export const fetchEMIs = async (user_id: number, loan_ids: string[]) => {
+  const promises = [];
+  for (const loan_id in loan_ids) {
+    promises.push(contract.methods.getUserEMI(user_id, loan_id).call());
+  }
+  return await Promise.all(promises);
+};
+
+export const findShgs = async (district: string) => {
+  const shgs: string[] = await contract.methods.shgsOfDistrict(district).call();
+  const promises = [];
+  for (let id in shgs) {
+    promises.push(contract.methods.shgs(id).call());
+  }
+  return await Promise.all(promises);
+};

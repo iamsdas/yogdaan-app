@@ -3,8 +3,10 @@ import {
   Text,
   TextInput,
   ScrollView,
+  View,
   TouchableOpacity,
   KeyboardAvoidingView,
+  ActivityIndicator,
 } from 'react-native';
 import { useWalletConnect } from '@walletconnect/react-native-dapp';
 import { useQueryClient } from '@tanstack/react-query';
@@ -22,26 +24,39 @@ export default function SignUp() {
   const [panchatName, setPanchayatName] = useState('');
   const [villageName, setVillageName] = useState('');
   const [gender, setGender] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const connection = useWalletConnect();
   const queryClient = useQueryClient();
 
   const onSubmitHandler = async () => {
-    const res = await signUp(
-      name,
-      aadhar,
-      mobno,
-      fatherName,
-      gender,
-      state,
-      district,
-      blockName,
-      panchatName,
-      villageName,
-      connection
-    );
-    queryClient.invalidateQueries(['login']);
+    try {
+      setLoading(true);
+      await signUp(
+        name,
+        aadhar,
+        mobno,
+        fatherName,
+        gender,
+        state,
+        district,
+        blockName,
+        panchatName,
+        villageName,
+        connection
+      );
+      queryClient.invalidateQueries(['login']);
+    } catch (e) {
+      setLoading(false);
+    }
   };
+
+  if (loading)
+    return (
+      <View style={tw`h-full flex flex-col items-center justify-center`}>
+        <ActivityIndicator size={'large'} />
+      </View>
+    );
 
   return (
     <KeyboardAvoidingView>
@@ -111,7 +126,7 @@ export default function SignUp() {
           onChangeText={setVillageName}
         />
         <TouchableOpacity
-          style={tw`bg-blue-300 px-3 py-2 my-2 rounded-full w-full`}
+          style={tw`bg-blue-400 px-3 py-2 my-2 rounded-full w-full`}
           onPress={onSubmitHandler}>
           <Text style={tw`text-white text-lg text-center`}>Register</Text>
         </TouchableOpacity>

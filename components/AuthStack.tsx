@@ -1,13 +1,14 @@
 import 'react-native-gesture-handler';
-import { createDrawerNavigator } from '@react-navigation/drawer';
 import SignUp from './Signup';
 import { useLogin } from '../utils/queries';
 import { useWalletConnect } from '@walletconnect/react-native-dapp';
-import { View, Text } from 'react-native';
+import { View, ActivityIndicator } from 'react-native';
 import tw from 'twrnc';
 import Home from './Home';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import SHGNear from './SHGNear';
 
-const Drawer = createDrawerNavigator();
+const Stack = createNativeStackNavigator();
 
 export default function AuthStack() {
   const connection = useWalletConnect();
@@ -16,16 +17,26 @@ export default function AuthStack() {
   if (isLoading)
     return (
       <View style={tw`flex flex-col items-center justify-center`}>
-        <Text>Loading</Text>
+        <ActivityIndicator size={'large'} />
       </View>
     );
+
   return (
-    <Drawer.Navigator>
+    <Stack.Navigator initialRouteName='Yogdaan'>
       {login ? (
-        <Drawer.Screen name='home' component={Home} />
+        <>
+          <Stack.Screen name='Yogdaan' component={Home} />
+          <Stack.Screen name='SHGs Nearby' component={SHGNear} />
+        </>
       ) : (
-        <Drawer.Screen name='Sign Up' component={SignUp} />
+        <>
+          <Stack.Screen
+            name='Sign Up'
+            component={SignUp}
+            options={{ presentation: 'modal' }}
+          />
+        </>
       )}
-    </Drawer.Navigator>
+    </Stack.Navigator>
   );
 }

@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import {
   fetchBalance,
+  fetchEMIs,
   fetchUserDetails,
   fetchUserLoanAmount,
+  findShgs,
   hasAccount,
-  web3,
 } from './helper';
 
 export const useLogin = (address: string) =>
@@ -20,3 +21,11 @@ export const useUserLoanAmount = (userId: number) =>
 
 export const useUserBalance = (address: string) =>
   useQuery(['balance'], () => fetchBalance(address));
+
+export const useUserEMIs = (user: any) =>
+  useQuery(['loans'], () => fetchEMIs(user?.user_id, user?.loan_ids), {
+    enabled: !!user,
+  });
+
+export const useSHGs = (district: string) =>
+  useQuery(['shgs'], () => findShgs(district), { enabled: !!district });
