@@ -5,6 +5,9 @@ import {
 } from '@expo/config-plugins';
 import { ExpoConfig } from '@expo/config-types';
 import xml2js from 'xml2js';
+import 'dotenv/config';
+
+const RPC_URL = process.env.RPC_URL ?? 'https://rpc-mumbai.matic.today';
 
 const queriesXml = `
 <queries>
@@ -49,19 +52,6 @@ type AndroidManifestWithQuery = AndroidManifest & {
   };
 };
 
-/**
- * Does not currently work as expected, need to run `expo prebuild`
- * to configure plugins, but this breaks the `Expo Go` app functionality
- *
- * @param androidManifest A AndroidManifest file that has been updated
- *                        to accept queries as a parameter
- * @returns an updated AndroidManifest file
- *
- * @see https://chafikgharbi.com/expo-android-manifest/
- * @see https://docs.expo.dev/workflow/customizing/
- * @see https://docs.expo.dev/workflow/configuration/
- * @see https://docs.expo.dev/guides/config-plugins/#modifying-the-androidmanifestxml
- */
 const addQueryToManifest = (androidManifest: AndroidManifestWithQuery) => {
   const { manifest } = androidManifest;
   let packageQuery: Queries;
@@ -115,6 +105,9 @@ const config: ExpoConfig = {
   },
   web: {
     favicon: './assets/favicon.png',
+  },
+  extra: {
+    RPC_URL,
   },
 };
 
