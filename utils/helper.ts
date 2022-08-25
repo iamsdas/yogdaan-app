@@ -25,19 +25,11 @@ const confirmTransaction = async (hash: string) => {
 };
 
 const sendTransaction = async (txdata: any, connection: WalletConnect) => {
-  const hash = await connection.sendTransaction({
+  return await connection.sendTransaction({
     data: txdata,
     from: connection.accounts[0],
     to: YogdaanAbis.networks[80001].address,
   });
-  const interval = setInterval(function () {
-    web3.eth.getTransactionReceipt(hash, function (err, rec) {
-      if (rec) {
-        clearInterval(interval);
-      }
-    });
-  }, 500);
-  await confirmTransaction(hash);
 };
 
 export const signUp = async (
@@ -67,5 +59,23 @@ export const signUp = async (
       villageName
     )
     .encodeABI();
-  return await sendTransaction(tx, connection);
+  const hash = await sendTransaction(tx, connection);
+  await confirmTransaction(hash);
+};
+
+export const fetchUserLoanAmount = async (userid: number) => {
+  return await contract.methods.getUserLoanAmount(userid).call();
+};
+
+export const fetchUserDetails = async (address: string) => {
+  const userId = await contract.methods.addressToUser(address).call();
+  return await contract.methods.users(userId).call();
+};
+
+export const fetchBalance = async (address: string) => {
+  return (
+    parseFloat(
+      await web3.utils.fromWei(await web3.eth.getBalance(address), 'ether')
+    ) * 80
+  ).toFixed(2);
 };
