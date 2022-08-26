@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Text,
   View,
@@ -13,14 +14,16 @@ import { makeRequest } from '../utils/helper';
 import { useWalletConnect } from '@walletconnect/react-native-dapp';
 
 const Request = ({ navigation, route }: NativeStackScreenProps<any>) => {
+  const client = useQueryClient();
   const shg = route.params?.shg;
   const connection = useWalletConnect();
   const { data: user, isLoading } = useUser(connection.accounts[0]);
   const [amount, setAmount] = useState('');
   const [time, setTime] = useState('');
   const [description, setDescription] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  if (isLoading)
+  if (isLoading || loading)
     return (
       <View style={tw`h-full flex flex-col items-center justify-center`}>
         <ActivityIndicator size={'large'} />
@@ -57,7 +60,23 @@ const Request = ({ navigation, route }: NativeStackScreenProps<any>) => {
       <TouchableOpacity
         style={tw`bg-blue-400 px-3 py-2 my-2 rounded-full w-full`}
         onPress={async () => {
-          makeRequest(shg.id, user.id, amount, description, time, connection);
+          setLoading(true);
+          try {
+            await makeRequest(
+              shg.id,
+              user.id,
+              amount,
+              description,
+              time,
+              connection
+            );
+            client.invalidateQueries(['requests']);
+          } catch (e) {
+            alert('Network error');
+          } finally {
+            navigation.navigate({ name: 'SHG Details', params: { shg } });
+            setLoading(false);
+          }
         }}>
         <Text style={tw`text-white text-lg text-center`}>Send Request</Text>
       </TouchableOpacity>

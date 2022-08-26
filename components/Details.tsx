@@ -15,12 +15,12 @@ const Details = ({ navigation, route }: NativeStackScreenProps<any>) => {
   const details = [
     { key: 'Name', value: shg.name },
     { key: 'Date of Formation', value: shg.dateOfFormation },
-    { key: 'Base Interest Rate', value: shg.baseInterest },
+    { key: 'Base Interest Rate', value: shg.baseIntrest },
     { key: 'State', value: shg.location.state },
     { key: 'District', value: shg.location.district },
     { key: 'Block', value: shg.location.blockName },
-    { key: 'Panchayat', value: shg.location.panchayatName },
-    { key: 'Village', value: shg.location.panchayatName },
+    { key: 'Panchayat', value: shg.location.panchyatName },
+    { key: 'Village', value: shg.location.villageName },
   ];
 
   const loan_details = (
@@ -38,10 +38,10 @@ const Details = ({ navigation, route }: NativeStackScreenProps<any>) => {
           loans
             .filter((loan) => loan.lenderId === shg.id)
             ?.map((loan) => (
-              <Text style={tw`text-center`}>
-                {loan.date}
-                {loan.amount}
-              </Text>
+              <View style={tw`flex flex-row justify around`}>
+                <Text style={tw`text-gray-400`}>{loan.date}</Text>
+                <Text style={tw`text-gray-400`}>{loan.amount}</Text>
+              </View>
             ))
         ) : (
           <Text style={tw`py-18 text-lg text-gray-700`}>
@@ -65,11 +65,15 @@ const Details = ({ navigation, route }: NativeStackScreenProps<any>) => {
         ) : requests?.length ? (
           requests
             .filter((req) => req.SHGId === shg.id)
-            ?.map((req) => (
-              <Text style={tw`text-center`}>
-                {req.description}
-                {req.amount}
-              </Text>
+            ?.map((req, idx) => (
+              <View
+                style={tw`w-full flex flex-row justify-around border-b border-gray-400`}
+                key={idx}>
+                <Text style={tw`text-gray-500 py-3 text-lg`}>
+                  {req.description}
+                </Text>
+                <Text style={tw`text-gray-500 py-3 text-lg`}>{req.amount}</Text>
+              </View>
             ))
         ) : (
           <Text style={tw`py-18 text-lg text-gray-700`}>
@@ -88,7 +92,7 @@ const Details = ({ navigation, route }: NativeStackScreenProps<any>) => {
         <View style={tw`p-4 border-2 border-gray-200 bg-white rounded-xl`}>
           {details.map((detail, idx) => (
             <View style={tw`flex w-full flex-row mb-1`} key={idx}>
-              <Text style={tw`text-xl text-gray-800 font-semibold`}>
+              <Text style={tw`text-xl text-gray-800 font-medium`}>
                 {detail.key}:{' '}
               </Text>
               <Text style={tw`text-xl text-gray-700 capitalize`}>

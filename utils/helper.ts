@@ -91,7 +91,7 @@ export const fetchEMIs = async (user_id: number, loan_ids: string[]) => {
 export const findShgs = async (district: string) => {
   const shgs: string[] = await contract.methods.shgsOfDistrict(district).call();
   const promises = [];
-  for (let id in shgs) {
+  for (const id of shgs) {
     promises.push(contract.methods.shgs(id).call());
   }
   return (await Promise.all(promises)).filter((shg) => shg.id !== '0');
@@ -100,7 +100,7 @@ export const findShgs = async (district: string) => {
 export const fetchAllLoans = async (userid: string) => {
   const lids = await contract.methods.findAllLoans(userid).call();
   const promises = [];
-  for (let id in lids) {
+  for (const id of lids) {
     promises.push(contract.methods.loans(id).call());
   }
   return await Promise.all(promises);
@@ -124,7 +124,7 @@ export const makeRequest = async (
 export const getUserRequests = async (userid: string) => {
   const lids = await contract.methods.getUserRequest(userid).call();
   const promises = [];
-  for (let id in lids) {
+  for (const id of lids) {
     promises.push(contract.methods.userRequests(id).call());
   }
   return await Promise.all(promises);
