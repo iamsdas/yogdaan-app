@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import {
+  fetchAllLoans,
   fetchBalance,
   fetchEMIs,
   fetchUserDetails,
@@ -29,3 +30,6 @@ export const useUserEMIs = (user: any) =>
 
 export const useSHGs = (district: string) =>
   useQuery(['shgs'], () => findShgs(district), { enabled: !!district });
+
+export const useLoans = (userid: string) =>
+  useQuery(['loans'], () => fetchAllLoans(userid), { enabled: !!userid });

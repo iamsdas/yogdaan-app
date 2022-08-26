@@ -94,5 +94,29 @@ export const findShgs = async (district: string) => {
   for (let id in shgs) {
     promises.push(contract.methods.shgs(id).call());
   }
+  return (await Promise.all(promises)).filter((shg) => shg.id !== '0');
+};
+
+export const fetchAllLoans = async (userid: string) => {
+  const lids = await contract.methods.findAllLoans(userid).call();
+  const promises = [];
+  for (let id in lids) {
+    promises.push(contract.methods.loans(id).call());
+  }
   return await Promise.all(promises);
+};
+
+export const makeRequest = async (
+  shgid: string,
+  userid: string,
+  amount: string,
+  desc: string,
+  time: string,
+  connection: WalletConnect
+) => {
+  const tx = await contract.methods
+    .makeRequest(shgid, userid, amount, desc, time)
+    .encodeABI();
+  const hash = await sendTransaction(tx, connection);
+  await confirmTransaction(hash);
 };

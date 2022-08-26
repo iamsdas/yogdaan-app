@@ -7,6 +7,8 @@ import tw from 'twrnc';
 import Home from './Home';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SHGNear from './SHGNear';
+import Details from './Details';
+import Request from './Request';
 
 const Stack = createNativeStackNavigator();
 
@@ -27,6 +29,8 @@ export default function AuthStack() {
         <>
           <Stack.Screen name='Yogdaan' component={Home} />
           <Stack.Screen name='SHGs Nearby' component={SHGNear} />
+          <Stack.Screen name='SHG Details' component={Details} />
+          <Stack.Screen name='Request' component={Request} />
         </>
       ) : (
         <>
