@@ -72,12 +72,12 @@ export const fetchUserDetails = async (address: string) => {
   return await contract.methods.users(userId).call();
 };
 
+export const weiToINR = async (input: string) => {
+  return (parseFloat(await web3.utils.fromWei(input, 'ether')) * 80).toFixed(2);
+};
+
 export const fetchBalance = async (address: string) => {
-  return (
-    parseFloat(
-      await web3.utils.fromWei(await web3.eth.getBalance(address), 'ether')
-    ) * 80
-  ).toFixed(2);
+  return weiToINR(await web3.eth.getBalance(address));
 };
 
 export const fetchEMIs = async (user_id: number, loan_ids: string[]) => {
@@ -85,7 +85,8 @@ export const fetchEMIs = async (user_id: number, loan_ids: string[]) => {
   for (const loan_id in loan_ids) {
     promises.push(contract.methods.getUserEMI(user_id, loan_id).call());
   }
-  return await Promise.all(promises);
+  const res = await Promise.all(promises);
+  return res.map((emi, idx) => ({ value: emi, lid: loan_ids[idx] }));
 };
 
 export const findShgs = async (district: string) => {
@@ -128,4 +129,16 @@ export const getUserRequests = async (userid: string) => {
     promises.push(contract.methods.userRequests(id).call());
   }
   return await Promise.all(promises);
+};
+
+export const payEmi = async (
+  connection: WalletConnect,
+  userid: string,
+  loanid: string,
+  amount: string
+) => {
+  const tx = await contract.methods.payEMI(userid, loanid, amount).encodeABI();
+  tx.value = amount;
+  const hash = await sendTransaction(tx, connection);
+  await confirmTransaction(hash);
 };

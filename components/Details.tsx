@@ -21,7 +21,15 @@ const Details = ({ navigation, route }: NativeStackScreenProps<any>) => {
     { key: 'Block', value: shg.location.blockName },
     { key: 'Panchayat', value: shg.location.panchyatName },
     { key: 'Village', value: shg.location.villageName },
+    { key: 'Current Balanace', value: shg.currentBalance },
   ];
+
+  const approved_reqs = requests?.filter(
+    (req) => req.SHGId === shg.id && req.status === '0'
+  );
+  const pending_reqs = requests?.filter(
+    (req) => req.SHGId === shg.id && req.status === '3'
+  );
 
   const loan_details = (
     <>
@@ -51,7 +59,8 @@ const Details = ({ navigation, route }: NativeStackScreenProps<any>) => {
       </View>
     </>
   );
-  const request_details = (
+
+  const pending_request_details = (
     <>
       <Text style={tw`text-2xl p-4 py-6 text-gray-700 font-medium`}>
         Pending Requests
@@ -62,19 +71,17 @@ const Details = ({ navigation, route }: NativeStackScreenProps<any>) => {
           <View style={tw`py-6`}>
             <ActivityIndicator size={'large'} />
           </View>
-        ) : requests?.length ? (
-          requests
-            .filter((req) => req.SHGId === shg.id)
-            ?.map((req, idx) => (
-              <View
-                style={tw`w-full flex flex-row justify-around border-b border-gray-400`}
-                key={idx}>
-                <Text style={tw`text-gray-500 py-3 text-lg`}>
-                  {req.description}
-                </Text>
-                <Text style={tw`text-gray-500 py-3 text-lg`}>{req.amount}</Text>
-              </View>
-            ))
+        ) : pending_reqs?.length ? (
+          pending_reqs?.map((req, idx) => (
+            <View
+              style={tw`w-full flex flex-row justify-around border-b border-gray-400`}
+              key={idx}>
+              <Text style={tw`text-gray-500 py-3 text-lg`}>
+                {req.description}
+              </Text>
+              <Text style={tw`text-gray-500 py-3 text-lg`}>{req.amount}</Text>
+            </View>
+          ))
         ) : (
           <Text style={tw`py-18 text-lg text-gray-700`}>
             No past requests for this SHG
@@ -83,6 +90,38 @@ const Details = ({ navigation, route }: NativeStackScreenProps<any>) => {
       </View>
     </>
   );
+
+  const approved_request_details = (
+    <>
+      <Text style={tw`text-2xl p-4 py-6 text-gray-700 font-medium`}>
+        Approved Requests
+      </Text>
+      <View
+        style={tw`flex items-center justify-center bg-white border border-gray-200 rounded-xl`}>
+        {requestLoadin ? (
+          <View style={tw`py-6`}>
+            <ActivityIndicator size={'large'} />
+          </View>
+        ) : approved_reqs?.length ? (
+          approved_reqs?.map((req, idx) => (
+            <View
+              style={tw`w-full flex flex-row justify-around border-b border-gray-400`}
+              key={idx}>
+              <Text style={tw`text-gray-500 py-3 text-lg`}>
+                {req.description}
+              </Text>
+              <Text style={tw`text-gray-500 py-3 text-lg`}>{req.amount}</Text>
+            </View>
+          ))
+        ) : (
+          <Text style={tw`py-18 text-lg text-gray-700`}>
+            No approved requests found
+          </Text>
+        )}
+      </View>
+    </>
+  );
+
   return (
     <View style={tw`h-full p-4 flex flex-col justify-between`}>
       <ScrollView>
@@ -102,7 +141,8 @@ const Details = ({ navigation, route }: NativeStackScreenProps<any>) => {
           ))}
         </View>
         {loan_details}
-        {request_details}
+        {pending_request_details}
+        {approved_request_details}
       </ScrollView>
       <TouchableOpacity
         style={tw`bg-blue-400 px-3 py-2 my-3 rounded-full w-full`}

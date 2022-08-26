@@ -4,6 +4,8 @@ import * as React from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import tw from 'twrnc';
+import { payEmi } from '../utils/helper';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   useUser,
   useUserBalance,
@@ -14,6 +16,7 @@ const cardBoxStyle = tw`flex flex-col items-center justify-center p-3 my-3 borde
 
 export default function Home({ navigation }: NativeStackScreenProps<any>) {
   const connection = useWalletConnect();
+  const client = useQueryClient();
   const { data: user } = useUser(connection.accounts[0]);
   const { data: loanAmt, isLoading: personalLoading } = useUserLoanAmount(
     user?.id
@@ -40,7 +43,7 @@ export default function Home({ navigation }: NativeStackScreenProps<any>) {
   const personal_details = (
     <>
       <Text style={tw`text-2xl p-4 py-6 text-gray-700 font-medium`}>
-        Hi {user.name.split(' ')[0]},
+        Hi {user.name.split(' ')[0]}
       </Text>
       {details.map((detail) => (
         <View style={cardBoxStyle} key={detail.id}>
@@ -60,18 +63,39 @@ export default function Home({ navigation }: NativeStackScreenProps<any>) {
       <Text style={tw`text-2xl p-4 py-6 text-gray-700 font-medium`}>
         Upcomming EMIs
       </Text>
-      <View
-        style={tw`flex items-center justify-center bg-white border border-gray-200 rounded-xl`}>
+      <View style={tw`flex items-center justify-center rounded-xl`}>
         {emiLoading ? (
           <View style={tw`py-6`}>
             <ActivityIndicator size={'large'} />
           </View>
         ) : emis?.length ? (
-          emis?.map((emi) => <Text>{emi}</Text>)
+          emis?.map((emi) => (
+            <View
+              style={tw`w-full flex flex-row jusitfy-between items-center px-2 py-3 bg-white my-2 rounded-xl`}
+              key={emi.lid}>
+              <View style={tw`flex-1 px-1`}>
+                <Text style={tw`text-sm font-bold text-gray-500`}>
+                  Loan #{emi.lid}
+                </Text>
+                <Text style={tw`text-xl text-gray-800`}>₹{emi.value}</Text>
+              </View>
+              <TouchableOpacity
+                style={tw`p-4 bg-blue-300 rounded-xl`}
+                onPress={async () => {
+                  await payEmi(connection, user.id, emi.lid, emi.value);
+                  client.invalidateQueries(['loans']);
+                }}>
+                <Text style={tw`text-white text-lg`}>₹Pay</Text>
+              </TouchableOpacity>
+            </View>
+          ))
         ) : (
-          <Text style={tw`py-18 text-lg text-gray-700`}>
-            Hurray! No EMIs to pay this month
-          </Text>
+          <View
+            style={tw`py-18  bg-white w-full rounded-xl flex justify-center items-center`}>
+            <Text style={tw`text-lg text-gray-700`}>
+              Hurray! No EMIs to pay this month
+            </Text>
+          </View>
         )}
       </View>
     </>
