@@ -120,3 +120,12 @@ export const makeRequest = async (
   const hash = await sendTransaction(tx, connection);
   await confirmTransaction(hash);
 };
+
+export const getUserRequests = async (userid: string) => {
+  const lids = await contract.methods.getUserRequest(userid).call();
+  const promises = [];
+  for (let id in lids) {
+    promises.push(contract.methods.userRequests(id).call());
+  }
+  return await Promise.all(promises);
+};

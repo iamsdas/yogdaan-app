@@ -30,7 +30,7 @@ const SHGNear = ({ navigation }: NativeStackScreenProps<any>) => {
       {shgs.map((shg) => (
         <TouchableOpacity
           key={shg.id}
-          style={tw`border-b-2 p-4 border-gray-300`}
+          style={tw`border-b-2 p-4 border-gray-200 bg-white`}
           onPress={() => {
             navigation.navigate({
               name: 'SHG Details',

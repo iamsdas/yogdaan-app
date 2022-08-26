@@ -39,7 +39,7 @@ export default function Home({ navigation }: NativeStackScreenProps<any>) {
 
   const personal_details = (
     <>
-      <Text style={tw`text-3xl p-4 py-6 text-gray-700 font-medium`}>
+      <Text style={tw`text-2xl p-4 py-6 text-gray-700 font-medium`}>
         Hi {user.name.split(' ')[0]},
       </Text>
       {details.map((detail) => (
@@ -47,7 +47,7 @@ export default function Home({ navigation }: NativeStackScreenProps<any>) {
           <Text style={tw`text-2xl text-gray-700 capitalize`}>
             {detail.key}
           </Text>
-          <Text style={tw`text-5xl text-gray-600 py-3 font-semibold`}>
+          <Text style={tw`text-4xl text-gray-600 py-3 font-semibold`}>
             {detail.val}
           </Text>
         </View>
@@ -57,7 +57,7 @@ export default function Home({ navigation }: NativeStackScreenProps<any>) {
 
   const emi_details = (
     <>
-      <Text style={tw`text-3xl p-4 py-6 text-gray-700 font-medium`}>
+      <Text style={tw`text-2xl p-4 py-6 text-gray-700 font-medium`}>
         Upcomming EMIs
       </Text>
       <View

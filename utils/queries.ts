@@ -6,6 +6,7 @@ import {
   fetchUserDetails,
   fetchUserLoanAmount,
   findShgs,
+  getUserRequests,
   hasAccount,
 } from './helper';
 
@@ -33,3 +34,6 @@ export const useSHGs = (district: string) =>
 
 export const useLoans = (userid: string) =>
   useQuery(['loans'], () => fetchAllLoans(userid), { enabled: !!userid });
+
+export const useRequests = (userid: string) =>
+  useQuery(['requests'], () => getUserRequests(userid), { enabled: !!userid });
